@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividades — MiniMentes</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+    <div class="cabecalho">
+        <button class="btn-voltar" onclick="window.location.href='index.html'">←</button>
+        <h2>🐾 MiniMentes</h2>
+    </div>
+
+    <div class="tela-atividades" style="padding-top: 30px;">
+        <p style="text-align:center; color: var(--texto-claro); margin-bottom: 25px; font-size: 1rem;">
+            Escolha uma atividade para começar!
+        </p>
+
+        <a class="card-atividade azul" href="memoria.html">
+            <div class="icone">🃏</div>
+            <div>
+                <h3>Jogo da Memória</h3>
+                <p>Encontre os pares dos animais!</p>
+            </div>
+            <div class="badge-concluido" id="badge-memoria"></div>
+        </a>
+
+        <a class="card-atividade amarelo" href="palavra.html">
+            <div class="icone">🔤</div>
+            <div>
+                <h3>Forme a Palavra</h3>
+                <p>Monte o nome do animal!</p>
+            </div>
+            <div class="badge-concluido" id="badge-palavra"></div>
+        </a>
+
+        <a class="card-atividade verde" href="leitura.html">
+            <div class="icone">📖</div>
+            <div>
+                <h3>Hora da Descoberta</h3>
+                <p>Leia e responda as perguntas!</p>
+            </div>
+            <div class="badge-concluido" id="badge-leitura"></div>
+        </a>
+    </div>
+
+    <script>
+        // Mostra badge de concluído se a atividade foi feita
+        if (localStorage.getItem('memoria_concluido')) {
+            document.getElementById('badge-memoria').textContent = '⭐';
+        }
+        if (localStorage.getItem('palavra_concluido')) {
+            document.getElementById('badge-palavra').textContent = '⭐';
+        }
+        if (localStorage.getItem('leitura_concluido')) {
+            document.getElementById('badge-leitura').textContent = '⭐';
+        }
+    </script>
+</body>
+</html>

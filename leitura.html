@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hora da Descoberta — MiniMentes</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+    <div class="cabecalho">
+        <button class="btn-voltar" onclick="window.location.href='atividades.html'">←</button>
+        <h2>📖 Hora da Descoberta</h2>
+        <div class="contador" id="contador">1/8</div>
+    </div>
+
+    <!-- Orientação -->
+    <div class="orientacao">
+        <span>📖</span>
+        <span>Você pode ler sozinho ou pedir para um adulto ler com você!</span>
+    </div>
+
+    <!-- Card de leitura -->
+    <div class="card-leitura" id="card-leitura">
+        <div class="animal-info">
+            <img id="animal-img" src="" alt="">
+            <h2 id="animal-nome"></h2>
+        </div>
+        <div class="texto-leitura" id="texto-leitura"></div>
+    </div>
+
+    <!-- Perguntas -->
+    <div id="area-perguntas"></div>
+
+    <!-- Botão próximo -->
+    <button class="btn-principal" id="btn-proximo" onclick="proximoAnimal()" style="display:none;">
+        Próximo Animal ➜
+    </button>
+
+    <!-- Feedback -->
+    <div class="feedback-overlay" id="overlay-feedback" style="display:none;">
+        <div class="feedback-card">
+            <div class="emoji" id="feedback-emoji"></div>
+            <h2 id="feedback-titulo"></h2>
+            <p id="feedback-texto"></p>
+            <button class="btn-principal" onclick="fecharFeedback()">Continuar</button>
+        </div>
+    </div>
+
+    <!-- Conclusão -->
+    <div class="feedback-overlay" id="overlay-conclusao" style="display:none;">
+        <div class="feedback-card">
+            <div class="emoji">🌟</div>
+            <h2>Incrível!</h2>
+            <p id="texto-conclusao"></p>
+            <div class="estrelas" id="estrelas"></div>
+            <button class="btn-principal" onclick="window.location.href='atividades.html'">Voltar ao Início</button>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:8080';
+        let animais = [];
+        let animalAtual = 0;
+        let perguntasRespondidas = 0;
+        let totalPerguntas = 0;
+        let acertos = 0;
+        let inicio = null;
+
+        async function carregarAnimais() {
+            try {
+                const res = await fetch(`${API}/animais`);
+                animais = await res.json();
+                inicio = Date.now();
+                mostrarAnimal();
+            } catch (e) {
+                console.error('Erro:', e);
+            }
+        }
+
+        async function mostrarAnimal() {
+            const animal = animais[animalAtual];
+            perguntasRespondidas = 0;
+
+            document.getElementById('animal-img').src = animal.imagem;
+            document.getElementById('animal-img').alt = animal.nome;
+            document.getElementById('animal-nome').textContent = animal.nome;
+            document.getElementById('texto-leitura').textContent = animal.texto;
+            document.getElementById('contador').textContent = `${animalAtual + 1}/${animais.length}`;
+            document.getElementById('btn-proximo').style.display = 'none';
+            document.getElementById('area-perguntas').innerHTML = '';
+
+            // Carrega perguntas do backend
+            try {
+                const res = await fetch(`${API}/perguntas/${animal.id}`);
+                const perguntas = await res.json();
+                totalPerguntas = perguntas.length;
+                mostrarPerguntas(perguntas);
+            } catch (e) {
+                console.error('Erro ao carregar perguntas:', e);
+            }
+        }
+
+        function mostrarPerguntas(perguntas) {
+            const area = document.getElementById('area-perguntas');
+
+            perguntas.forEach((p, index) => {
+                const card = document.createElement('div');
+                card.className = 'card-pergunta';
+                card.id = `pergunta-${index}`;
+
+                const opcoes = [p.opcao1, p.opcao2, p.opcao3];
+                const opcoesEmbaralhadas = [...opcoes].sort(() => Math.random() - 0.5);
+
+                card.innerHTML = `
+                    <h3>${p.pergunta}</h3>
+                    ${opcoesEmbaralhadas.map(op => `
+                        <button class="opcao-btn" onclick="responder(this, '${op}', '${p.resposta}', ${index})">
+                            ${op}
+                        </button>
+                    `).join('')}
+                `;
+
+                area.appendChild(card);
+            });
+        }
+
+        function responder(btn, opcao, respostaCorreta, indexPergunta) {
+            // Bloqueia outros botões da mesma pergunta
+            const card = document.getElementById(`pergunta-${indexPergunta}`);
+            const botoes = card.querySelectorAll('.opcao-btn');
+            botoes.forEach(b => b.disabled = true);
+
+            if (opcao === respostaCorreta) {
+                btn.classList.add('correta');
+                acertos++;
+                mostrarFeedback(true, respostaCorreta);
+            } else {
+                btn.classList.add('errada');
+                // Mostra a correta
+                botoes.forEach(b => {
+                    if (b.textContent.trim() === respostaCorreta) {
+                        b.classList.add('correta');
+                    }
+                });
+                mostrarFeedback(false, respostaCorreta);
+            }
+
+            perguntasRespondidas++;
+            if (perguntasRespondidas === totalPerguntas) {
+                setTimeout(() => {
+                    document.getElementById('btn-proximo').style.display = 'block';
+                }, 1500);
+            }
+        }
+
+        function mostrarFeedback(acertou, resposta) {
+            const overlay = document.getElementById('overlay-feedback');
+            document.getElementById('feedback-emoji').textContent = acertou ? '🎉' : '😊';
+            document.getElementById('feedback-titulo').textContent = acertou ? 'Muito bem!' : 'Quase!';
+            document.getElementById('feedback-texto').textContent = acertou
+                ? 'Você acertou!'
+                : `A resposta certa era: ${resposta}`;
+            overlay.style.display = 'flex';
+        }
+
+        function fecharFeedback() {
+            document.getElementById('overlay-feedback').style.display = 'none';
+        }
+
+        function proximoAnimal() {
+            animalAtual++;
+
+            if (animalAtual >= animais.length) {
+                const tempo = Math.round((Date.now() - inicio) / 1000);
+                salvarResultado(tempo);
+                const total = animais.length * 2;
+                document.getElementById('texto-conclusao').textContent =
+                    `Você acertou ${acertos} de ${total} perguntas!`;
+                document.getElementById('estrelas').textContent =
+                    acertos >= total * 0.8 ? '⭐⭐⭐' : acertos >= total * 0.5 ? '⭐⭐' : '⭐';
+                document.getElementById('overlay-conclusao').style.display = 'flex';
+            } else {
+                mostrarAnimal();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        async function salvarResultado(tempo) {
+            try {
+                await fetch(`${API}/resultados`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        atividade: 'Hora da Descoberta',
+                        acertos: acertos,
+                        tempoSegundos: tempo
+                    })
+                });
+                localStorage.setItem('leitura_concluido', 'true');
+            } catch (e) {
+                console.error('Erro ao salvar resultado:', e);
+            }
+        }
+
+        carregarAnimais();
+    </script>
+</body>
+</html>

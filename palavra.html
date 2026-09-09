@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forme a Palavra — MiniMentes</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+    <div class="cabecalho">
+        <button class="btn-voltar" onclick="window.location.href='atividades.html'">←</button>
+        <h2>🔤 Forme a Palavra</h2>
+        <div class="contador" id="contador">1/8</div>
+    </div>
+
+    <div id="area-jogo">
+        <div class="animal-destaque">
+            <img id="animal-img" src="" alt="">
+            <p style="color: var(--texto-claro); font-size: 0.95rem; margin-top: 8px;">Qual é este animal?</p>
+        </div>
+
+        <div class="area-resposta" id="area-resposta"></div>
+
+        <p style="text-align:center; color: var(--texto-claro); font-size: 0.9rem; padding: 10px;">
+            Toque nas letras para formar o nome!
+        </p>
+
+        <div class="area-letras" id="area-letras"></div>
+
+        <button class="btn-secundario" onclick="limparResposta()" style="margin-top: 5px;">
+            🔄 Limpar
+        </button>
+    </div>
+
+    <!-- Feedback -->
+    <div class="feedback-overlay" id="overlay-feedback" style="display:none;">
+        <div class="feedback-card">
+            <div class="emoji" id="feedback-emoji"></div>
+            <h2 id="feedback-titulo"></h2>
+            <p id="feedback-texto"></p>
+            <button class="btn-principal" id="btn-feedback" onclick="proximoAnimal()"></button>
+        </div>
+    </div>
+
+    <!-- Conclusão -->
+    <div class="feedback-overlay" id="overlay-conclusao" style="display:none;">
+        <div class="feedback-card">
+            <div class="emoji">🎉</div>
+            <h2>Muito bem!</h2>
+            <p id="texto-conclusao"></p>
+            <button class="btn-principal" onclick="window.location.href='leitura.html'">Próxima Atividade ➜</button>
+            <button class="btn-secundario" onclick="reiniciar()">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:8080';
+        let animais = [];
+        let animalAtual = 0;
+        let letrasSelecionadas = [];
+        let acertos = 0;
+        let inicio = null;
+
+        async function carregarAnimais() {
+            try {
+                const res = await fetch(`${API}/animais`);
+                animais = await res.json();
+                inicio = Date.now();
+                mostrarAnimal();
+            } catch (e) {
+                console.error('Erro:', e);
+            }
+        }
+
+        function mostrarAnimal() {
+            const animal = animais[animalAtual];
+            letrasSelecionadas = [];
+
+            document.getElementById('animal-img').src = animal.imagem;
+            document.getElementById('animal-img').alt = animal.nome;
+            document.getElementById('contador').textContent = `${animalAtual + 1}/${animais.length}`;
+
+            // Embaralha as letras da palavra
+            const letras = animal.palavra.split('');
+            const embaralhadas = [...letras].sort(() => Math.random() - 0.5);
+
+            // Limpa áreas
+            document.getElementById('area-resposta').innerHTML = '';
+            const areaLetras = document.getElementById('area-letras');
+            areaLetras.innerHTML = '';
+
+            // Cria slots de resposta vazios
+            letras.forEach(() => {
+                const slot = document.createElement('div');
+                slot.className = 'letra-slot vazio';
+                slot.style.background = 'transparent';
+                slot.style.border = '2px dashed var(--amarelo-escuro)';
+                document.getElementById('area-resposta').appendChild(slot);
+            });
+
+            // Cria botões de letras embaralhadas
+            embaralhadas.forEach((letra, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'letra-btn disponivel';
+                btn.textContent = letra;
+                btn.dataset.index = index;
+                btn.addEventListener('click', () => selecionarLetra(btn, letra, index));
+                areaLetras.appendChild(btn);
+            });
+        }
+
+        function selecionarLetra(btn, letra, index) {
+            if (btn.disabled) return;
+
+            btn.disabled = true;
+            btn.classList.remove('disponivel');
+            btn.classList.add('selecionada');
+            btn.style.opacity = '0.4';
+
+            letrasSelecionadas.push({ letra, index });
+
+            // Atualiza slot
+            const slots = document.getElementById('area-resposta').children;
+            const posicao = letrasSelecionadas.length - 1;
+            if (slots[posicao]) {
+                slots[posicao].textContent = letra;
+                slots[posicao].style.background = 'var(--amarelo)';
+                slots[posicao].style.border = 'none';
+            }
+
+            // Verifica se completou
+            const animal = animais[animalAtual];
+            if (letrasSelecionadas.length === animal.palavra.length) {
+                setTimeout(verificarPalavra, 300);
+            }
+        }
+
+        function verificarPalavra() {
+            const animal = animais[animalAtual];
+            const palavraFormada = letrasSelecionadas.map(l => l.letra).join('');
+
+            if (palavraFormada === animal.palavra) {
+                acertos++;
+                mostrarFeedback(true, animal.nome);
+            } else {
+                mostrarFeedback(false, animal.nome);
+            }
+        }
+
+        function mostrarFeedback(acertou, nome) {
+            const overlay = document.getElementById('overlay-feedback');
+            const emoji = document.getElementById('feedback-emoji');
+            const titulo = document.getElementById('feedback-titulo');
+            const texto = document.getElementById('feedback-texto');
+            const btn = document.getElementById('btn-feedback');
+
+            if (acertou) {
+                emoji.textContent = '🎉';
+                titulo.textContent = 'Muito bem!';
+                texto.textContent = `Você formou ${nome}!`;
+                btn.textContent = animalAtual < animais.length - 1 ? 'Próximo Animal ➜' : 'Ver Resultado!';
+            } else {
+                emoji.textContent = '😊';
+                titulo.textContent = 'Quase!';
+                texto.textContent = `O nome certo é ${nome}. Tente novamente!`;
+                btn.textContent = 'Tentar Novamente';
+                btn.onclick = tentarNovamente;
+            }
+
+            overlay.style.display = 'flex';
+        }
+
+        function proximoAnimal() {
+            document.getElementById('overlay-feedback').style.display = 'none';
+            animalAtual++;
+
+            if (animalAtual >= animais.length) {
+                const tempo = Math.round((Date.now() - inicio) / 1000);
+                salvarResultado(tempo);
+                document.getElementById('texto-conclusao').textContent =
+                    `Você acertou ${acertos} de ${animais.length} palavras!`;
+                document.getElementById('overlay-conclusao').style.display = 'flex';
+            } else {
+                mostrarAnimal();
+            }
+        }
+
+        function tentarNovamente() {
+            document.getElementById('overlay-feedback').style.display = 'none';
+            document.getElementById('btn-feedback').onclick = proximoAnimal;
+            mostrarAnimal();
+        }
+
+        function limparResposta() {
+            mostrarAnimal();
+        }
+
+        function reiniciar() {
+            animalAtual = 0;
+            acertos = 0;
+            inicio = Date.now();
+            document.getElementById('overlay-conclusao').style.display = 'none';
+            mostrarAnimal();
+        }
+
+        async function salvarResultado(tempo) {
+            try {
+                await fetch(`${API}/resultados`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        atividade: 'Forme a Palavra',
+                        acertos: acertos,
+                        tempoSegundos: tempo
+                    })
+                });
+                localStorage.setItem('palavra_concluido', 'true');
+            } catch (e) {
+                console.error('Erro ao salvar resultado:', e);
+            }
+        }
+
+        carregarAnimais();
+    </script>
+</body>
+</html>

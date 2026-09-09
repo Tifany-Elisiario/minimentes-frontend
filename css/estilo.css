@@ -1,0 +1,720 @@
+/* ================================
+   MINIMENTES — Estilos Principais
+   ================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+/* Variáveis de cor */
+:root {
+  --creme: #f5f0e8;
+  --azul: #a8d8e8;
+  --azul-escuro: #6ab4cc;
+  --amarelo: #f5e6a3;
+  --amarelo-escuro: #e8c94a;
+  --marrom: #8b6347;
+  --verde: #b8e0b0;
+  --verde-escuro: #6bc267;
+  --rosa: #f5c5c5;
+  --branco: #ffffff;
+  --texto: #5a4030;
+  --texto-claro: #8b7355;
+  --sombra: rgba(139, 99, 71, 0.15);
+}
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--creme);
+  color: var(--texto);
+  min-height: 100vh;
+}
+
+/* ================================
+   TELA INICIAL
+   ================================ */
+
+.tela-inicial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  text-align: center;
+}
+
+.logo {
+  margin-bottom: 10px;
+}
+
+.logo h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--marrom);
+  letter-spacing: -1px;
+}
+
+.logo h1 span {
+  color: var(--azul-escuro);
+}
+
+.logo p {
+  font-size: 1.1rem;
+  color: var(--texto-claro);
+  margin-top: 5px;
+}
+
+.animais-decoracao {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.animais-decoracao img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--branco);
+  box-shadow: 0 4px 12px var(--sombra);
+}
+
+.btn-comecar {
+  background-color: var(--azul-escuro);
+  color: var(--branco);
+  border: none;
+  border-radius: 50px;
+  padding: 18px 50px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #4a9ab8, 0 8px 15px var(--sombra);
+  transition: all 0.1s;
+  margin-top: 20px;
+}
+
+.btn-comecar:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #4a9ab8;
+}
+
+.btn-responsavel {
+  background: none;
+  border: 2px solid var(--texto-claro);
+  border-radius: 50px;
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Nunito', sans-serif;
+  color: var(--texto-claro);
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.2s;
+}
+
+.btn-responsavel:hover {
+  background-color: var(--amarelo);
+  border-color: var(--amarelo-escuro);
+  color: var(--texto);
+}
+
+/* ================================
+   CABEÇALHO DAS ATIVIDADES
+   ================================ */
+
+.cabecalho {
+  background-color: var(--branco);
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 2px 10px var(--sombra);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.cabecalho h2 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--marrom);
+  flex: 1;
+}
+
+.btn-voltar {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.contador {
+  background-color: var(--azul);
+  color: var(--marrom);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* ================================
+   TELA DE ATIVIDADES
+   ================================ */
+
+.tela-atividades {
+  padding: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.card-atividade {
+  background-color: var(--branco);
+  border-radius: 24px;
+  padding: 25px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 15px var(--sombra);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  text-decoration: none;
+  color: var(--texto);
+}
+
+.card-atividade:active {
+  transform: scale(0.97);
+}
+
+.card-atividade .icone {
+  font-size: 3rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+.card-atividade h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.card-atividade p {
+  font-size: 0.9rem;
+  color: var(--texto-claro);
+}
+
+.card-atividade.azul { border-left: 6px solid var(--azul-escuro); }
+.card-atividade.amarelo { border-left: 6px solid var(--amarelo-escuro); }
+.card-atividade.verde { border-left: 6px solid var(--verde-escuro); }
+
+.badge-concluido {
+  margin-left: auto;
+  font-size: 1.5rem;
+}
+
+/* ================================
+   JOGO DA MEMÓRIA
+   ================================ */
+
+.grade-memoria {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.carta {
+  aspect-ratio: 1;
+  border-radius: 16px;
+  cursor: pointer;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.4s;
+}
+
+.carta.virada {
+  transform: rotateY(180deg);
+}
+
+.carta-frente,
+.carta-verso {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carta-frente {
+  background-color: var(--azul);
+  font-size: 2rem;
+  box-shadow: 0 4px 10px var(--sombra);
+}
+
+.carta-verso {
+  background-color: var(--branco);
+  transform: rotateY(180deg);
+  box-shadow: 0 4px 10px var(--sombra);
+  flex-direction: column;
+  gap: 5px;
+  padding: 5px;
+}
+
+.carta-verso img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+
+.carta-verso span {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--marrom);
+  text-align: center;
+}
+
+.carta.acertada .carta-frente,
+.carta.acertada .carta-verso {
+  background-color: var(--verde);
+}
+
+/* ================================
+   FORME A PALAVRA
+   ================================ */
+
+.animal-destaque {
+  text-align: center;
+  padding: 20px;
+}
+
+.animal-destaque img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+
+.animal-destaque h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--marrom);
+  margin-top: 10px;
+}
+
+.area-resposta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  min-height: 60px;
+  padding: 15px;
+  margin: 0 20px;
+  background-color: var(--branco);
+  border-radius: 16px;
+  box-shadow: inset 0 2px 8px var(--sombra);
+}
+
+.area-letras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: 15px 20px;
+}
+
+.letra-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1.3rem;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  transition: all 0.1s;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+}
+
+.letra-btn.disponivel {
+  background-color: var(--amarelo);
+  color: var(--marrom);
+}
+
+.letra-btn.disponivel:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.15);
+}
+
+.letra-btn.selecionada {
+  background-color: var(--azul);
+  color: var(--marrom);
+}
+
+.letra-slot {
+  width: 40px;
+  height: 48px;
+  border-radius: 10px;
+  background-color: var(--amarelo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--marrom);
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--amarelo-escuro);
+}
+
+/* ================================
+   HORA DA DESCOBERTA
+   ================================ */
+
+.card-leitura {
+  background-color: var(--branco);
+  border-radius: 24px;
+  padding: 25px;
+  margin: 20px;
+  box-shadow: 0 4px 15px var(--sombra);
+}
+
+.card-leitura .animal-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.card-leitura .animal-info img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.card-leitura .animal-info h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--marrom);
+}
+
+.texto-leitura {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--texto);
+  background-color: var(--creme);
+  border-radius: 16px;
+  padding: 15px;
+}
+
+.orientacao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--amarelo);
+  border-radius: 16px;
+  padding: 12px 15px;
+  margin: 0 20px 15px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.card-pergunta {
+  background-color: var(--branco);
+  border-radius: 24px;
+  padding: 20px;
+  margin: 0 20px 15px;
+  box-shadow: 0 4px 15px var(--sombra);
+}
+
+.card-pergunta h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--marrom);
+  margin-bottom: 15px;
+}
+
+.opcao-btn {
+  width: 100%;
+  background-color: var(--creme);
+  border: 2px solid var(--amarelo-escuro);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Nunito', sans-serif;
+  color: var(--texto);
+  cursor: pointer;
+  margin-bottom: 10px;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.opcao-btn:hover {
+  background-color: var(--amarelo);
+}
+
+.opcao-btn.correta {
+  background-color: var(--verde);
+  border-color: var(--verde-escuro);
+}
+
+.opcao-btn.errada {
+  background-color: var(--rosa);
+  border-color: #e88;
+}
+
+/* ================================
+   FEEDBACK
+   ================================ */
+
+.feedback {
+  text-align: center;
+  padding: 20px;
+  border-radius: 24px;
+  margin: 20px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.feedback.acerto {
+  background-color: var(--verde);
+  color: var(--texto);
+}
+
+.feedback.erro {
+  background-color: var(--amarelo);
+  color: var(--texto);
+}
+
+.feedback-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.feedback-card {
+  background: var(--branco);
+  border-radius: 30px;
+  padding: 40px 30px;
+  text-align: center;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.feedback-card .emoji {
+  font-size: 4rem;
+  margin-bottom: 15px;
+}
+
+.feedback-card h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--marrom);
+  margin-bottom: 10px;
+}
+
+.feedback-card p {
+  font-size: 1rem;
+  color: var(--texto-claro);
+  margin-bottom: 20px;
+}
+
+/* ================================
+   BOTÕES GERAIS
+   ================================ */
+
+.btn-principal {
+  background-color: var(--azul-escuro);
+  color: var(--branco);
+  border: none;
+  border-radius: 50px;
+  padding: 16px 40px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #4a9ab8;
+  transition: all 0.1s;
+  display: block;
+  width: calc(100% - 40px);
+  margin: 10px 20px;
+}
+
+.btn-principal:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 #4a9ab8;
+}
+
+.btn-secundario {
+  background-color: var(--amarelo);
+  color: var(--texto);
+  border: none;
+  border-radius: 50px;
+  padding: 16px 40px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--amarelo-escuro);
+  transition: all 0.1s;
+  display: block;
+  width: calc(100% - 40px);
+  margin: 10px 20px;
+}
+
+.btn-secundario:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--amarelo-escuro);
+}
+
+/* ================================
+   PAINEL DO RESPONSÁVEL
+   ================================ */
+
+.painel-header {
+  background-color: var(--marrom);
+  color: var(--branco);
+  padding: 30px 20px 20px;
+  text-align: center;
+}
+
+.painel-header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.painel-header p {
+  opacity: 0.8;
+  margin-top: 5px;
+}
+
+.card-resultado {
+  background-color: var(--branco);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 15px 20px;
+  box-shadow: 0 4px 15px var(--sombra);
+}
+
+.card-resultado h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--marrom);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--creme);
+}
+
+.stat:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  font-size: 0.95rem;
+  color: var(--texto-claro);
+}
+
+.stat-valor {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.sem-dados {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--texto-claro);
+}
+
+.sem-dados .emoji {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+/* ================================
+   TELA DE CONCLUSÃO
+   ================================ */
+
+.tela-conclusao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.tela-conclusao .emoji-grande {
+  font-size: 5rem;
+  margin-bottom: 20px;
+}
+
+.tela-conclusao h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--marrom);
+  margin-bottom: 10px;
+}
+
+.tela-conclusao p {
+  font-size: 1.1rem;
+  color: var(--texto-claro);
+  margin-bottom: 30px;
+  max-width: 300px;
+}
+
+.estrelas {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+}
+
+/* ================================
+   RESPONSIVIDADE
+   ================================ */
+
+@media (max-width: 400px) {
+  .logo h1 { font-size: 2.5rem; }
+  .grade-memoria { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .letra-btn { width: 42px; height: 42px; font-size: 1.1rem; }
+}
+
+@media (min-width: 600px) {
+  .tela-atividades,
+  .card-leitura,
+  .card-pergunta,
+  .grade-memoria {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

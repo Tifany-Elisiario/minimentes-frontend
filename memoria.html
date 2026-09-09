@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Memória — MiniMentes</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+    <div class="cabecalho">
+        <button class="btn-voltar" onclick="window.location.href='atividades.html'">←</button>
+        <h2>🃏 Jogo da Memória</h2>
+        <div class="contador" id="contador">Pares: 0/8</div>
+    </div>
+
+    <div style="text-align:center; padding: 15px 20px 5px; color: var(--texto-claro); font-size: 0.95rem;">
+        Encontre os pares de animais! 🐾
+    </div>
+
+    <div class="grade-memoria" id="grade"></div>
+
+    <!-- Feedback de conclusão -->
+    <div class="feedback-overlay" id="overlay-conclusao" style="display:none;">
+        <div class="feedback-card">
+            <div class="emoji">🎉</div>
+            <h2>Parabéns!</h2>
+            <p>Você encontrou todos os pares!</p>
+            <p style="font-size: 0.9rem; color: var(--texto-claro);">Tempo: <strong id="tempo-final"></strong></p>
+            <button class="btn-principal" onclick="jogarNovamente()">Jogar Novamente</button>
+            <button class="btn-secundario" onclick="proximaAtividade()">Próxima Atividade ➜</button>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:8080';
+        let animais = [];
+        let cartasSelecionadas = [];
+        let paresEncontrados = 0;
+        let bloqueado = false;
+        let inicio = null;
+        let timerInterval = null;
+
+        // Carrega animais do backend
+        async function carregarAnimais() {
+            try {
+                const res = await fetch(`${API}/animais`);
+                animais = await res.json();
+                iniciarJogo();
+            } catch (e) {
+                console.error('Erro ao carregar animais:', e);
+            }
+        }
+
+        function iniciarJogo() {
+            paresEncontrados = 0;
+            cartasSelecionadas = [];
+            bloqueado = false;
+            inicio = Date.now();
+
+            // Cria pares: imagem + nome
+            const pares = [];
+            animais.forEach(animal => {
+                pares.push({ id: animal.id, tipo: 'imagem', imagem: animal.imagem, nome: animal.nome });
+                pares.push({ id: animal.id, tipo: 'nome', imagem: animal.imagem, nome: animal.nome });
+            });
+
+            // Embaralha
+            pares.sort(() => Math.random() - 0.5);
+
+            // Cria cartas
+            const grade = document.getElementById('grade');
+            grade.innerHTML = '';
+            pares.forEach((par, index) => {
+                const carta = document.createElement('div');
+                carta.className = 'carta';
+                carta.dataset.id = par.id;
+                carta.dataset.index = index;
+
+                if (par.tipo === 'imagem') {
+                    carta.innerHTML = `
+                        <div class="carta-frente">🐾</div>
+                        <div class="carta-verso">
+                            <img src="${par.imagem}" alt="${par.nome}">
+                        </div>`;
+                } else {
+                    carta.innerHTML = `
+                        <div class="carta-frente">🐾</div>
+                        <div class="carta-verso">
+                            <span style="font-size: 0.85rem; font-weight: 800; color: var(--marrom); text-align: center; padding: 5px;">${par.nome}</span>
+                        </div>`;
+                }
+
+                carta.addEventListener('click', () => virarCarta(carta));
+                grade.appendChild(carta);
+            });
+
+            document.getElementById('contador').textContent = 'Pares: 0/8';
+        }
+
+        function virarCarta(carta) {
+            if (bloqueado) return;
+            if (carta.classList.contains('virada')) return;
+            if (carta.classList.contains('acertada')) return;
+            if (cartasSelecionadas.length >= 2) return;
+
+            carta.classList.add('virada');
+            cartasSelecionadas.push(carta);
+
+            if (cartasSelecionadas.length === 2) {
+                bloqueado = true;
+                setTimeout(verificarPar, 800);
+            }
+        }
+
+        function verificarPar() {
+            const [c1, c2] = cartasSelecionadas;
+            if (c1.dataset.id === c2.dataset.id) {
+                // Par encontrado!
+                c1.classList.add('acertada');
+                c2.classList.add('acertada');
+                paresEncontrados++;
+                document.getElementById('contador').textContent = `Pares: ${paresEncontrados}/8`;
+
+                if (paresEncontrados === 8) {
+                    const tempo = Math.round((Date.now() - inicio) / 1000);
+                    document.getElementById('tempo-final').textContent = `${tempo} segundos`;
+                    setTimeout(() => {
+                        document.getElementById('overlay-conclusao').style.display = 'flex';
+                        salvarResultado(tempo);
+                    }, 500);
+                }
+            } else {
+                // Par errado — vira de volta
+                c1.classList.remove('virada');
+                c2.classList.remove('virada');
+            }
+
+            cartasSelecionadas = [];
+            bloqueado = false;
+        }
+
+        async function salvarResultado(tempo) {
+            try {
+                await fetch(`${API}/resultados`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        atividade: 'Jogo da Memória',
+                        acertos: 8,
+                        tempoSegundos: tempo
+                    })
+                });
+                localStorage.setItem('memoria_concluido', 'true');
+            } catch (e) {
+                console.error('Erro ao salvar resultado:', e);
+            }
+        }
+
+        function jogarNovamente() {
+            document.getElementById('overlay-conclusao').style.display = 'none';
+            iniciarJogo();
+        }
+
+        function proximaAtividade() {
+            window.location.href = 'palavra.html';
+        }
+
+        carregarAnimais();
+    </script>
+</body>
+</html>
