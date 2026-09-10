@@ -5,12 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo da Memória — MiniMentes</title>
     <link rel="stylesheet" href="css/estilo.css">
+    <style>
+        .grade-memoria {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .carta {
+            aspect-ratio: 1;
+            min-height: 130px;
+        }
+    </style>
 </head>
 <body>
     <div class="cabecalho">
         <button class="btn-voltar" onclick="window.location.href='atividades.html'">←</button>
         <h2>🃏 Jogo da Memória</h2>
-        <div class="contador" id="contador">Pares: 0/8</div>
+        <div class="contador" id="contador">Pares: 0/4</div>
     </div>
 
     <div style="text-align:center; padding: 15px 20px 5px; color: var(--texto-claro); font-size: 0.95rem;">
@@ -32,6 +46,7 @@
 
     <script>
         const API = 'https://minimentes-backend-production.up.railway.app';
+        let todosAnimais = [];
         let animais = [];
         let cartasSelecionadas = [];
         let paresEncontrados = 0;
@@ -41,7 +56,7 @@
         async function carregarAnimais() {
             try {
                 const res = await fetch(`${API}/animais`);
-                animais = await res.json();
+                todosAnimais = await res.json();
                 iniciarJogo();
             } catch (e) {
                 console.error('Erro ao carregar animais:', e);
@@ -54,6 +69,11 @@
             bloqueado = false;
             inicio = Date.now();
 
+            // Pega 4 animais aleatórios
+            const embaralhados = [...todosAnimais].sort(() => Math.random() - 0.5);
+            animais = embaralhados.slice(0, 4);
+
+            // Cria pares
             const pares = [];
             animais.forEach(animal => {
                 pares.push({ id: animal.id, imagem: animal.imagem, nome: animal.nome });
@@ -81,7 +101,7 @@
                 grade.appendChild(carta);
             });
 
-            document.getElementById('contador').textContent = 'Pares: 0/8';
+            document.getElementById('contador').textContent = 'Pares: 0/4';
         }
 
         function virarCarta(carta) {
@@ -108,9 +128,9 @@
                 c2.querySelector('.nome-animal').style.display = 'block';
 
                 paresEncontrados++;
-                document.getElementById('contador').textContent = `Pares: ${paresEncontrados}/8`;
+                document.getElementById('contador').textContent = `Pares: ${paresEncontrados}/4`;
 
-                if (paresEncontrados === 8) {
+                if (paresEncontrados === 4) {
                     const tempo = Math.round((Date.now() - inicio) / 1000);
                     document.getElementById('tempo-final').textContent = `${tempo} segundos`;
                     setTimeout(() => {
@@ -134,7 +154,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         atividade: 'Jogo da Memória',
-                        acertos: 8,
+                        acertos: 4,
                         tempoSegundos: tempo
                     })
                 });
