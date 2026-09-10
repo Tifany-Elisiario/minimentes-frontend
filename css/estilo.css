@@ -229,10 +229,15 @@ body {
 .grade-memoria {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  padding: 20px;
+  gap: 8px;
+  padding: 15px;
   max-width: 500px;
   margin: 0 auto;
+}
+
+.grade-memoria .carta {
+  aspect-ratio: 1;
+  min-height: 80px;
 }
 
 .carta {
